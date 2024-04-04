@@ -1,0 +1,16 @@
+{
+  "name": "repo2pdf",
+  "version": "1.0.0",
+  "description": "Node.js script to scan .js, .ts, files and convert them to a PDF",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["file", "scanner", "markdown", "pdf"],
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "marked": "^3.0.8",
+    "puppeteer": "^13.0.0"
+  }
+}
