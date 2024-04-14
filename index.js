@@ -4,11 +4,21 @@ const marked = require('marked');
 const puppeteer = require('puppeteer');
 
 const directoryPath = process.argv[2];
+const pdfName = process.argv[3];
 console.log(process.argv);
 if (!fs.existsSync(directoryPath)) {
   process.exit(-1);
 }
 let markdownContent = '';
+
+const excludes = ['tests', '__mocks__'];
+const excludeExts = ['.jpg', '.png', '.lock', '.exe', '.log'];
+
+function isExcluted(p) {
+    if (path.basename(p).startsWith('.')
+        || excludeExts.some(ext => p.endsWith(ext))) return true;
+    return excludes.some(exclude => p.includes(exclude));
+}
 
 const scanDirectory = async (directory) => {
     const files = fs.readdirSync(directory);
@@ -20,7 +30,9 @@ const scanDirectory = async (directory) => {
         if (stat.isDirectory()) {
             await scanDirectory(filePath);
         } else if (filePath.endsWith('.js') || filePath.endsWith('.ts')) {
+            if (isExcluted(filePath)) continue;
             const content = fs.readFileSync(filePath, 'utf-8');
+            console.log(filePath);
             markdownContent += `# ${filePath}\n\`\`\`${filePath.split('.').pop()}\n${content}\n\`\`\`\n`;
         }
     }
@@ -36,7 +48,7 @@ const run = async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setContent(htmlContent);
-    await page.pdf({ path: 'output.pdf', format: 'A4' });
+    await page.pdf({ path: `${pdfName.replace(/\.pdf$/i, '') || 'noname'}.pdf`, format: 'A4', timeout: 10 * 60 * 1000 });
 
     await browser.close();
 };
