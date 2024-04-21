@@ -11,8 +11,9 @@ if (!fs.existsSync(directoryPath)) {
 }
 let markdownContent = '';
 
-const excludes = ['tests', '__mocks__'];
-const excludeExts = ['.jpg', '.png', '.lock', '.exe', '.log'];
+const includes = ['.js', '.ts', '.jsx'];
+const excludes = ['tests', '__mocks__', '/lottie_', 'standalone.js', 'canvaskit', '/server/'];
+const excludeExts = ['.jpg', '.png', '.lock', '.exe', '.log', '.json'];
 
 function isExcluted(p) {
     if (path.basename(p).startsWith('.')
@@ -29,7 +30,7 @@ const scanDirectory = async (directory) => {
 
         if (stat.isDirectory()) {
             await scanDirectory(filePath);
-        } else if (filePath.endsWith('.js') || filePath.endsWith('.ts')) {
+        } else if (includes.some(ext => filePath.toLowerCase().endsWith(ext))) {
             if (isExcluted(filePath)) continue;
             const content = fs.readFileSync(filePath, 'utf-8');
             console.log(filePath);
